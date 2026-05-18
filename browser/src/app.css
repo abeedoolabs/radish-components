@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@source "../../src/lib/**/*.svelte";
+@import "../../src/lib/theme.css";
+@plugin "daisyui" {
+  themes: all;
+}

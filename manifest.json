@@ -1,0 +1,161 @@
+{
+  "name": "@abeedoo/radish-components",
+  "version": "0.1.0",
+  "framework": "svelte5",
+  "styling": "daisyui5+tailwindcss4",
+  "import": "import { ComponentName } from '@abeedoo/radish-components'",
+  "types": {
+    "Size": ["xs", "sm", "md", "lg"],
+    "Variant": ["primary", "secondary", "accent", "info", "success", "warning", "error", "ghost", "neutral"],
+    "ColorVariant": ["primary", "secondary", "accent", "info", "success", "warning", "error"]
+  },
+  "stores": {
+    "toast": {
+      "import": "import { toast } from '@abeedoo/radish-components'",
+      "methods": ["success(msg, duration?)", "error(msg, duration?)", "warning(msg, duration?)", "info(msg, duration?)", "dismiss(id)", "clear()"]
+    }
+  },
+  "categories": {
+    "actions": {
+      "Button": {
+        "props": {
+          "variant": { "type": "Variant", "required": false },
+          "size": { "type": "Size", "required": false },
+          "outline": { "type": "boolean", "default": false },
+          "loading": { "type": "boolean", "default": false },
+          "disabled": { "type": "boolean", "default": false },
+          "wide": { "type": "boolean", "default": false },
+          "block": { "type": "boolean", "default": false },
+          "href": { "type": "string", "required": false, "notes": "renders as <a>" },
+          "type": { "type": "string", "default": "button", "values": ["button", "submit", "reset"] },
+          "children": { "type": "Snippet" }
+        },
+        "restProps": true,
+        "example": "<Button variant=\"primary\" onclick={handler}>Save</Button>"
+      },
+      "Dropdown": {
+        "props": {
+          "label": { "type": "string", "default": "Open" },
+          "variant": { "type": "Variant", "required": false },
+          "size": { "type": "Size", "required": false },
+          "mode": { "type": "string", "default": "details", "values": ["details", "popover"] },
+          "position": { "type": "string", "default": "bottom", "values": ["top", "bottom", "left", "right"] },
+          "align": { "type": "string", "default": "start", "values": ["start", "end"] },
+          "hover": { "type": "boolean", "default": false },
+          "trigger": { "type": "Snippet", "required": false },
+          "children": { "type": "Snippet", "notes": "<li> menu items" }
+        },
+        "example": "<Dropdown label=\"Menu\" variant=\"primary\"><li><button>Item</button></li></Dropdown>"
+      },
+      "Swap": {
+        "props": {
+          "active": { "type": "boolean", "default": false, "bindable": true },
+          "rotate": { "type": "boolean", "default": false },
+          "flip": { "type": "boolean", "default": false },
+          "on": { "type": "Snippet" },
+          "off": { "type": "Snippet" }
+        },
+        "example": "<Swap bind:active>{#snippet on()}ON{/snippet}{#snippet off()}OFF{/snippet}</Swap>"
+      },
+      "ThemeController": {
+        "props": {
+          "theme": { "type": "string", "default": "light", "bindable": true },
+          "themes": { "type": "string[]", "default": ["light", "dark"] }
+        }
+      }
+    },
+    "data-display": {
+      "Accordion": { "props": { "exclusive": { "type": "boolean", "default": false }, "children": { "type": "Snippet" } } },
+      "AccordionItem": { "props": { "title": { "type": "string" }, "name": { "type": "string", "notes": "same name = exclusive" }, "checked": { "type": "boolean", "default": false }, "children": { "type": "Snippet" } } },
+      "Avatar": { "props": { "src": { "type": "string" }, "placeholder": { "type": "string" }, "size": { "type": "string", "values": ["xs", "sm", "md", "lg"] }, "online": { "type": "boolean" }, "rounded": { "type": "boolean", "default": true } } },
+      "AvatarGroup": { "props": { "children": { "type": "Snippet" } } },
+      "Badge": { "props": { "text": { "type": "string" }, "variant": { "type": "string", "notes": "'auto' maps status text to colors" }, "size": { "type": "Size" }, "outline": { "type": "boolean" } }, "example": "<Badge text=\"Active\" variant=\"auto\" />" },
+      "Carousel": { "props": { "snap": { "type": "string", "default": "start" }, "vertical": { "type": "boolean" }, "children": { "type": "Snippet" } } },
+      "Collapse": { "props": { "title": { "type": "string" }, "open": { "type": "boolean" }, "icon": { "type": "string", "values": ["arrow", "plus"] }, "children": { "type": "Snippet" } } },
+      "Countdown": { "props": { "value": { "type": "number", "notes": "0-99" } } },
+      "Kbd": { "props": { "key": { "type": "string" }, "size": { "type": "Size" } } },
+      "List": { "props": { "size": { "type": "Size" }, "children": { "type": "Snippet" } } },
+      "ListItem": { "props": { "children": { "type": "Snippet" } } },
+      "Stat": { "props": { "title": { "type": "string" }, "value": { "type": "string|number" }, "description": { "type": "string" }, "figure": { "type": "Snippet" } } },
+      "StatGroup": { "props": { "horizontal": { "type": "boolean", "default": true }, "children": { "type": "Snippet" } } },
+      "Status": { "props": { "variant": { "type": "ColorVariant", "default": "success" } } },
+      "Table": { "props": { "zebra": { "type": "boolean" }, "pinRows": { "type": "boolean" }, "pinCols": { "type": "boolean" }, "size": { "type": "Size" }, "children": { "type": "Snippet" } } },
+      "Timeline": { "props": { "vertical": { "type": "boolean", "default": true }, "compact": { "type": "boolean" }, "children": { "type": "Snippet" } } },
+      "TimelineItem": { "props": { "variant": { "type": "ColorVariant" }, "start": { "type": "Snippet" }, "end": { "type": "Snippet" } } }
+    },
+    "data-input": {
+      "Checkbox": { "props": { "checked": { "type": "boolean", "bindable": true }, "label": { "type": "string" }, "variant": { "type": "ColorVariant" }, "size": { "type": "Size" }, "indeterminate": { "type": "boolean" } }, "restProps": true },
+      "FileInput": { "props": { "variant": { "type": "ColorVariant" }, "size": { "type": "Size" }, "bordered": { "type": "boolean", "default": true }, "accept": { "type": "string" }, "multiple": { "type": "boolean" } }, "restProps": true },
+      "FormField": { "props": { "name": { "type": "string" }, "label": { "type": "string" }, "type": { "type": "string", "values": ["text", "email", "password", "number", "url", "tel", "date", "select", "textarea", "checkbox"] }, "value": { "type": "string|number|boolean" }, "error": { "type": "string" }, "helpText": { "type": "string" }, "options": { "type": "array", "notes": "[{value, label}]" }, "required": { "type": "boolean" } } },
+      "Radio": { "props": { "value": { "type": "string" }, "group": { "type": "string", "bindable": true }, "label": { "type": "string" }, "variant": { "type": "ColorVariant" }, "name": { "type": "string" } }, "restProps": true },
+      "Range": { "props": { "value": { "type": "number", "bindable": true, "default": 50 }, "min": { "type": "number", "default": 0 }, "max": { "type": "number", "default": 100 }, "step": { "type": "number", "default": 1 }, "variant": { "type": "ColorVariant" } }, "restProps": true },
+      "Rating": { "props": { "value": { "type": "number", "bindable": true }, "max": { "type": "number", "default": 5 }, "half": { "type": "boolean" }, "size": { "type": "Size" } } },
+      "Select": { "props": { "value": { "type": "string", "bindable": true }, "options": { "type": "array", "notes": "[{value, label, disabled?}]" }, "placeholder": { "type": "string" }, "variant": { "type": "ColorVariant" }, "size": { "type": "Size" } }, "restProps": true },
+      "TextInput": { "props": { "value": { "type": "string", "bindable": true }, "type": { "type": "string", "default": "text" }, "placeholder": { "type": "string" }, "variant": { "type": "ColorVariant" }, "size": { "type": "Size" }, "bordered": { "type": "boolean", "default": true }, "ghost": { "type": "boolean" } }, "restProps": true },
+      "Textarea": { "props": { "value": { "type": "string", "bindable": true }, "rows": { "type": "number", "default": 3 }, "variant": { "type": "ColorVariant" }, "size": { "type": "Size" } }, "restProps": true },
+      "Toggle": { "props": { "checked": { "type": "boolean", "bindable": true }, "label": { "type": "string" }, "variant": { "type": "ColorVariant" }, "size": { "type": "Size" } }, "restProps": true }
+    },
+    "feedback": {
+      "Alert": { "props": { "variant": { "type": "ColorVariant", "default": "info" }, "icon": { "type": "string", "notes": "auto per variant" }, "children": { "type": "Snippet" } }, "restProps": true },
+      "Loading": { "props": { "type": { "type": "string", "default": "spinner", "values": ["spinner", "dots", "ring", "ball", "bars", "infinity"] }, "size": { "type": "Size" }, "variant": { "type": "ColorVariant" } } },
+      "Progress": { "props": { "value": { "type": "number" }, "max": { "type": "number", "default": 100 }, "variant": { "type": "ColorVariant" } } },
+      "RadialProgress": { "props": { "value": { "type": "number" }, "size": { "type": "string", "default": "4rem" }, "thickness": { "type": "string", "default": "4px" }, "variant": { "type": "ColorVariant" } } },
+      "Skeleton": { "props": { "width": { "type": "string" }, "height": { "type": "string" }, "circle": { "type": "boolean" } } },
+      "Toast": { "props": {}, "notes": "Mount once in root layout. Use toast store to trigger." },
+      "Tooltip": { "props": { "tip": { "type": "string" }, "position": { "type": "string", "values": ["top", "bottom", "left", "right"] }, "variant": { "type": "ColorVariant" }, "open": { "type": "boolean" }, "children": { "type": "Snippet" } } }
+    },
+    "layout": {
+      "Card": { "props": { "title": { "type": "string" }, "description": { "type": "string" }, "compact": { "type": "boolean" }, "flat": { "type": "boolean" }, "headerActions": { "type": "Snippet" }, "children": { "type": "Snippet" } }, "restProps": true },
+      "Divider": { "props": { "text": { "type": "string" }, "vertical": { "type": "boolean" }, "variant": { "type": "ColorVariant" } } },
+      "Drawer": { "props": { "open": { "type": "boolean", "bindable": true }, "id": { "type": "string" }, "side": { "type": "string", "values": ["left", "right"] }, "sidebar": { "type": "Snippet" }, "children": { "type": "Snippet" } } },
+      "Footer": { "props": { "center": { "type": "boolean" }, "children": { "type": "Snippet" } } },
+      "Hero": { "props": { "overlay": { "type": "Snippet" }, "children": { "type": "Snippet" } } },
+      "Stack": { "props": { "children": { "type": "Snippet" } } }
+    },
+    "navigation": {
+      "Breadcrumbs": { "props": { "items": { "type": "array", "notes": "[{label, href?}]" }, "size": { "type": "string", "values": ["sm", "md", "lg"] } } },
+      "Dock": { "props": { "size": { "type": "Size" }, "children": { "type": "Snippet" } } },
+      "DockItem": { "props": { "href": { "type": "string" }, "active": { "type": "boolean" }, "label": { "type": "string" }, "children": { "type": "Snippet" } } },
+      "Link": { "props": { "href": { "type": "string" }, "variant": { "type": "ColorVariant" }, "hover": { "type": "boolean", "default": true }, "children": { "type": "Snippet" } }, "restProps": true },
+      "Menu": { "props": { "horizontal": { "type": "boolean" }, "size": { "type": "Size" }, "rounded": { "type": "boolean", "default": true }, "children": { "type": "Snippet" } } },
+      "MenuItem": { "props": { "href": { "type": "string" }, "active": { "type": "boolean" }, "disabled": { "type": "boolean" }, "children": { "type": "Snippet" } }, "restProps": true },
+      "MenuTitle": { "props": { "title": { "type": "string" } } },
+      "Navbar": { "props": { "start": { "type": "Snippet" }, "center": { "type": "Snippet" }, "end": { "type": "Snippet" } } },
+      "Pagination": { "props": { "page": { "type": "number", "bindable": true, "default": 1 }, "totalPages": { "type": "number" }, "size": { "type": "Size" }, "onChange": { "type": "function" } } },
+      "Step": { "props": { "variant": { "type": "ColorVariant" }, "content": { "type": "string" }, "children": { "type": "Snippet" } } },
+      "Steps": { "props": { "vertical": { "type": "boolean" }, "children": { "type": "Snippet" } } }
+    },
+    "composites": {
+      "ConfirmDialog": { "props": { "open": { "type": "boolean", "bindable": true }, "title": { "type": "string", "default": "Confirm" }, "message": { "type": "string" }, "confirmLabel": { "type": "string", "default": "Delete" }, "confirmVariant": { "type": "string", "default": "error" }, "onConfirm": { "type": "function" }, "onCancel": { "type": "function" } } },
+      "DataTable": {
+        "props": {
+          "items": { "type": "any[]" },
+          "columns": { "type": "Column[]", "notes": "[{key, label, sortable?, render?, renderHtml?, className?}]" },
+          "actions": { "type": "Action[]", "notes": "[{label, icon?, href?, onClick?, variant?, hidden?}]" },
+          "searchable": { "type": "boolean" },
+          "onSearch": { "type": "function" },
+          "sortBy": { "type": "string" },
+          "sortDir": { "type": "string", "values": ["asc", "desc"] },
+          "onSort": { "type": "function" },
+          "selectable": { "type": "boolean" },
+          "selectedItems": { "type": "any[]", "bindable": true },
+          "onSelectionChange": { "type": "function" },
+          "onRowClick": { "type": "function" },
+          "rowClass": { "type": "function", "notes": "(item) => string" },
+          "page": { "type": "number" },
+          "totalPages": { "type": "number" },
+          "onPageChange": { "type": "function" },
+          "totalCount": { "type": "number" },
+          "loading": { "type": "boolean" },
+          "idKey": { "type": "string", "default": "id" },
+          "headerActions": { "type": "Snippet" }
+        }
+      },
+      "EmptyState": { "props": { "icon": { "type": "string", "default": "database" }, "title": { "type": "string" }, "message": { "type": "string" }, "actions": { "type": "Snippet" } } },
+      "Icon": { "props": { "name": { "type": "string" }, "size": { "type": "number", "default": 20 } }, "icons": ["home", "users", "settings", "key", "database", "activity", "edit", "trash", "plus", "search", "x", "check", "alert-triangle", "chevron-up", "chevron-down", "chevron-left", "chevron-right", "eye", "lock", "unlock", "refresh-cw", "log-out", "arrow-left", "check-circle", "alert-circle", "info", "more-vertical", "layout-dashboard", "file-text", "clock", "heart", "star", "mail", "bell", "zap", "globe", "link", "download", "upload", "filter", "menu", "external-link", "shield"] },
+      "Modal": { "props": { "open": { "type": "boolean", "bindable": true }, "title": { "type": "string" }, "size": { "type": "string", "values": ["sm", "md", "lg", "xl"] }, "closeOnBackdrop": { "type": "boolean", "default": true }, "onclose": { "type": "function" }, "children": { "type": "Snippet" }, "footer": { "type": "Snippet" } } },
+      "PageHeader": { "props": { "title": { "type": "string" }, "subtitle": { "type": "string" }, "breadcrumbs": { "type": "array", "notes": "[{label, href?}]" }, "actions": { "type": "Snippet" } } },
+      "Tabs": { "props": { "tabs": { "type": "array", "notes": "[{key, label, icon?, disabled?, content?}]" }, "activeTab": { "type": "string", "bindable": true }, "variant": { "type": "string", "values": ["bordered", "lifted", "boxed"] }, "size": { "type": "string" }, "onChange": { "type": "function" } } }
+    }
+  }
+}

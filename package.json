@@ -1,0 +1,65 @@
+{
+  "name": "@abeedoo/radish-components",
+  "version": "0.4.2",
+  "description": "Svelte 5 + DaisyUI v5 component library — 70+ components with TypeScript, runes, and snippets",
+  "type": "module",
+  "svelte": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "svelte": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./toast": {
+      "types": "./dist/stores/toast.d.ts",
+      "default": "./dist/stores/toast.js"
+    },
+    "./theme": "./dist/theme.css",
+    "./theme.css": "./dist/theme.css"
+  },
+  "files": [
+    "dist",
+    "!dist/**/*.test.*"
+  ],
+  "scripts": {
+    "build": "svelte-package -i src/lib",
+    "dev": "svelte-package -i src/lib -w",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/abeedoolabs/radish-components.git"
+  },
+  "homepage": "https://components.radishplatform.com",
+  "bugs": {
+    "url": "https://github.com/abeedoolabs/radish-components/issues"
+  },
+  "keywords": [
+    "svelte",
+    "svelte5",
+    "daisyui",
+    "tailwindcss",
+    "components",
+    "ui",
+    "design-system"
+  ],
+  "author": "Clifford Meece <clifford@abeedoo.com>",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "peerDependencies": {
+    "svelte": "^5.0.0",
+    "tailwindcss": "^4.0.0",
+    "daisyui": "^5.0.0"
+  },
+  "devDependencies": {
+    "@sveltejs/package": "^2.0.0",
+    "@sveltejs/vite-plugin-svelte": "^4.0.0",
+    "svelte": "^5.0.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.4.0"
+  }
+}

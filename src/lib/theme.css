@@ -1,0 +1,375 @@
+/*
+ * @abeedoo/radish-components — Radish project themes
+ *
+ * All themes sourced from radishplatform.com/brand.
+ * Each Radish project has a light theme; CLI also has a dark variant.
+ *
+ * Usage in app.css:
+ *   @import "tailwindcss";
+ *   @import "@abeedoo/radish-components/theme.css";
+ *   @plugin "daisyui";
+ *
+ * Then set: <html data-theme="radish-cli">
+ */
+
+@plugin "daisyui/theme" {
+  name: "radish-cli";
+  default: true;
+  color-scheme: light;
+
+  /* Primary: Slate — CLI brand color */
+  --color-primary: #334155;
+  --color-primary-content: #ffffff;
+
+  /* Secondary: Deeper slate */
+  --color-secondary: #475569;
+  --color-secondary-content: #ffffff;
+
+  /* Accent: Radish red */
+  --color-accent: #e74c3c;
+  --color-accent-content: #ffffff;
+
+  /* Neutral: Near-black slate */
+  --color-neutral: #0f172a;
+  --color-neutral-content: #f1f5f9;
+
+  /* Base: Clean whites with cool slate tint */
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #e2e8f0;
+  --color-base-content: #1e293b;
+
+  /* Semantic */
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  /* Radius */
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+
+  /* Animation */
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+
+  /* Border */
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+@plugin "daisyui/theme" {
+  name: "radish-cli-dark";
+  color-scheme: dark;
+
+  /* Primary: Lighter slate for dark mode contrast */
+  --color-primary: #94a3b8;
+  --color-primary-content: #0f172a;
+
+  /* Secondary */
+  --color-secondary: #64748b;
+  --color-secondary-content: #f8fafc;
+
+  /* Accent: Radish red */
+  --color-accent: #e74c3c;
+  --color-accent-content: #ffffff;
+
+  /* Neutral */
+  --color-neutral: #1e293b;
+  --color-neutral-content: #e2e8f0;
+
+  /* Base: Dark slate backgrounds */
+  --color-base-100: #0f172a;
+  --color-base-200: #1e293b;
+  --color-base-300: #334155;
+  --color-base-content: #e2e8f0;
+
+  /* Semantic */
+  --color-info: #3b82f6;
+  --color-info-content: #0f172a;
+  --color-success: #22c55e;
+  --color-success-content: #0f172a;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #0f172a;
+
+  /* Radius */
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+
+  /* Animation */
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+
+  /* Border */
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Platform ── Warm reds and oranges. Marketing energy. */
+
+@plugin "daisyui/theme" {
+  name: "radish-brand";
+  color-scheme: light;
+
+  --color-primary: #e74c3c;
+  --color-primary-content: #ffffff;
+  --color-secondary: #2c3e50;
+  --color-secondary-content: #ffffff;
+  --color-accent: #e67e22;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1a1d23;
+  --color-neutral-content: #f1f5f9;
+  --color-base-100: #ffffff;
+  --color-base-200: #f8f9fa;
+  --color-base-300: #e9ecef;
+  --color-base-content: #1a1d23;
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Wizard ── Purple + gold. AI magic, creative energy. */
+
+@plugin "daisyui/theme" {
+  name: "radish-wizard";
+  color-scheme: light;
+
+  --color-primary: #7c3aed;
+  --color-primary-content: #ffffff;
+  --color-secondary: #1e1b4b;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f59e0b;
+  --color-accent-content: #1c1917;
+  --color-neutral: #1e1b4b;
+  --color-neutral-content: #ede9fe;
+  --color-base-100: #ffffff;
+  --color-base-200: #faf5ff;
+  --color-base-300: #ede9fe;
+  --color-base-content: #1e1b4b;
+  --color-info: #6366f1;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #f59e0b;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Hub ── Teal + warm orange accent. Dashboard calm, action where needed. */
+
+@plugin "daisyui/theme" {
+  name: "radish-hub";
+  color-scheme: light;
+
+  --color-primary: #0d9488;
+  --color-primary-content: #ffffff;
+  --color-secondary: #134e4a;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f97316;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1a2332;
+  --color-neutral-content: #ccfbf1;
+  --color-base-100: #ffffff;
+  --color-base-200: #f0fdfa;
+  --color-base-300: #ccfbf1;
+  --color-base-content: #1a2332;
+  --color-info: #06b6d4;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Lib ── Indigo + pink accent. Structured library, design-forward. */
+
+@plugin "daisyui/theme" {
+  name: "radish-lib";
+  color-scheme: light;
+
+  --color-primary: #4f46e5;
+  --color-primary-content: #ffffff;
+  --color-secondary: #312e81;
+  --color-secondary-content: #ffffff;
+  --color-accent: #ec4899;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1e1b4b;
+  --color-neutral-content: #e0e7ff;
+  --color-base-100: #ffffff;
+  --color-base-200: #eef2ff;
+  --color-base-300: #e0e7ff;
+  --color-base-content: #1e1b4b;
+  --color-info: #6366f1;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Schemas ── Slate + indigo accent. Structural, validation-focused. */
+
+@plugin "daisyui/theme" {
+  name: "radish-schemas";
+  color-scheme: light;
+
+  --color-primary: #334155;
+  --color-primary-content: #ffffff;
+  --color-secondary: #475569;
+  --color-secondary-content: #ffffff;
+  --color-accent: #4f46e5;
+  --color-accent-content: #ffffff;
+  --color-neutral: #0f172a;
+  --color-neutral-content: #e2e8f0;
+  --color-base-100: #ffffff;
+  --color-base-200: #f8fafc;
+  --color-base-300: #e2e8f0;
+  --color-base-content: #0f172a;
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Docs ── Warm amber. Readable, approachable documentation. */
+
+@plugin "daisyui/theme" {
+  name: "radish-docs";
+  color-scheme: light;
+
+  --color-primary: #d97706;
+  --color-primary-content: #ffffff;
+  --color-secondary: #92400e;
+  --color-secondary-content: #ffffff;
+  --color-accent: #e74c3c;
+  --color-accent-content: #ffffff;
+  --color-neutral: #1c1917;
+  --color-neutral-content: #fef3c7;
+  --color-base-100: #ffffff;
+  --color-base-200: #fffbeb;
+  --color-base-300: #fef3c7;
+  --color-base-content: #1c1917;
+  --color-info: #3b82f6;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #d97706;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
+
+/* ── Cloud ── Sky blue. Cloud infrastructure, reliability, scale. */
+
+@plugin "daisyui/theme" {
+  name: "radish-cloud";
+  color-scheme: light;
+
+  --color-primary: #0ea5e9;
+  --color-primary-content: #ffffff;
+  --color-secondary: #0369a1;
+  --color-secondary-content: #ffffff;
+  --color-accent: #f97316;
+  --color-accent-content: #ffffff;
+  --color-neutral: #0c4a6e;
+  --color-neutral-content: #e0f2fe;
+  --color-base-100: #ffffff;
+  --color-base-200: #f0f9ff;
+  --color-base-300: #e0f2fe;
+  --color-base-content: #0c4a6e;
+  --color-info: #0ea5e9;
+  --color-info-content: #ffffff;
+  --color-success: #22c55e;
+  --color-success-content: #ffffff;
+  --color-warning: #eab308;
+  --color-warning-content: #1c1917;
+  --color-error: #ef4444;
+  --color-error-content: #ffffff;
+
+  --rounded-box: 0.75rem;
+  --rounded-btn: 0.5rem;
+  --rounded-badge: 1.5rem;
+  --animation-btn: 0.2s;
+  --animation-input: 0.2s;
+  --border-btn: 1px;
+  --tab-border: 1px;
+  --tab-radius: 0.5rem;
+}
