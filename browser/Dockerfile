@@ -3,19 +3,19 @@ FROM node:20-alpine AS build
 WORKDIR /app
 
 # Copy component library and install its deps (needed for theme.css daisyui resolution)
-COPY packages/components/package.json ./packages/components/
-COPY packages/components/src ./packages/components/src
-RUN cd packages/components && npm install --omit=dev
+COPY package.json ./
+COPY src ./src
+RUN npm install --omit=dev
 
 # Copy browser app and install
-COPY packages/components/browser ./packages/components/browser
-WORKDIR /app/packages/components/browser
+COPY browser ./browser
+WORKDIR /app/browser
 RUN npm install
 RUN npm run build
 
 # Serve static files with nginx
 FROM nginx:alpine
-COPY --from=build /app/packages/components/browser/build /usr/share/nginx/html
+COPY --from=build /app/browser/build /usr/share/nginx/html
 
 # SPA fallback — route all paths to index.html
 RUN echo 'server { \
