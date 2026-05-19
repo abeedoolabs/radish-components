@@ -41,7 +41,7 @@
     },
     {
       label: 'Composites', href: '/composites',
-      items: ['AutoForm', 'ChatPanel', 'ConfirmDialog', 'DataTable', 'EmptyState', 'Icon', 'Modal', 'PageHeader', 'Tabs']
+      items: ['AutoForm', 'ChatPanel', 'ConfirmDialog', 'DataGrid', 'DataTable', 'EmptyState', 'Icon', 'Modal', 'PageHeader', 'Tabs']
     }
   ];
 

@@ -312,6 +312,33 @@ export const modalProps: PropDef[] = [
   childrenProp
 ];
 
+export const dataGridProps: PropDef[] = [
+  { name: 'items', type: 'any[]', description: 'Row data' },
+  { name: 'columns', type: 'Column[]', description: '[{ key, label, sortable?, width?, align?, visible?, editable?, editType?, editOptions?, render? }]' },
+  { name: 'pagination', type: 'object', description: '{ page, totalCount, totalPages }' },
+  { name: 'filters', type: 'Filter[]', description: '[{ key, label, type, options?, value? }]' },
+  { name: 'bulkActions', type: 'BulkAction[]', description: '[{ label, icon?, variant?, confirm?, action }]' },
+  { name: 'onSearch', type: 'function', description: '(query: string) => void' },
+  { name: 'onSort', type: 'function', description: '(key: string, dir: "asc" | "desc") => void' },
+  { name: 'onPageChange', type: 'function', description: '(page: number) => void' },
+  { name: 'onFilterChange', type: 'function', description: '(filters: Record<string, string>) => void' },
+  { name: 'onCellEdit', type: 'function', description: '(itemId: string, key: string, value: any) => void' },
+  { name: 'onRowClick', type: 'function', description: '(item: any) => void' },
+  { name: 'onSaveView', type: 'function', description: '(view: SavedView) => void' },
+  { name: 'onDeleteView', type: 'function', description: '(viewId: string) => void' },
+  { name: 'onViewChange', type: 'function', description: '(view: SavedView | null) => void' },
+  { name: 'savedViews', type: 'SavedView[]', description: 'Saved view configurations' },
+  { name: 'entityName', type: 'string', default: 'items', description: 'Label for empty state and export' },
+  { name: 'searchQuery', type: 'string', description: 'Controlled search value' },
+  { name: 'sortBy', type: 'string', description: 'Controlled sort column' },
+  { name: 'sortDir', type: 'string', default: 'asc', description: 'Controlled sort direction' },
+  { name: 'exportable', type: 'boolean', default: 'true', description: 'Show CSV export button' },
+  { name: 'expandable', type: 'boolean', default: 'false', description: 'Enable row expansion' },
+  { name: 'expandContent', type: 'Snippet<[item]>', description: 'Expanded row content' },
+  { name: 'idKey', type: 'string', default: 'id', description: 'Key for row identity' },
+  classProp
+];
+
 export const dataTableProps: PropDef[] = [
   { name: 'items', type: 'any[]', description: 'Row data' },
   { name: 'columns', type: 'Column[]', description: '[{ key, label, sortable?, render?, renderHtml?, className? }]' },

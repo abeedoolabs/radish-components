@@ -74,6 +74,7 @@ export { default as Steps } from './components/navigation/Steps.svelte';
 // Composites
 export { default as AutoForm } from './components/composites/AutoForm.svelte';
 export { default as ConfirmDialog } from './components/composites/ConfirmDialog.svelte';
+export { default as DataGrid } from './components/composites/DataGrid.svelte';
 export { default as DataTable } from './components/composites/DataTable.svelte';
 export { default as EmptyState } from './components/composites/EmptyState.svelte';
 export { default as Icon } from './components/composites/Icon.svelte';

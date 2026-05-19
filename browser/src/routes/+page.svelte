@@ -6,7 +6,7 @@
     'Feedback': ['Alert', 'Loading', 'Progress', 'RadialProgress', 'Skeleton', 'Toast', 'Tooltip'],
     'Layout': ['Card', 'Divider', 'Drawer', 'Footer', 'Hero', 'Stack'],
     'Navigation': ['Breadcrumbs', 'Dock', 'Link', 'Menu', 'Navbar', 'Pagination', 'Steps'],
-    'Composites': ['ConfirmDialog', 'DataTable', 'EmptyState', 'Icon', 'Modal', 'PageHeader', 'Tabs']
+    'Composites': ['ConfirmDialog', 'DataGrid', 'DataTable', 'EmptyState', 'Icon', 'Modal', 'PageHeader', 'Tabs']
   };
 
   const total = Object.values(components).flat().length;

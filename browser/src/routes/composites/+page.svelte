@@ -1,7 +1,7 @@
 <script lang="ts">
-  import { DataTable, Modal, ConfirmDialog, EmptyState, Icon, PageHeader, Tabs, toast, Toast, AutoForm, ChatPanel, JsonLd, productLd } from '@abeedoo/radish-components';
+  import { DataGrid, DataTable, Modal, ConfirmDialog, EmptyState, Icon, PageHeader, Tabs, toast, Toast, AutoForm, ChatPanel, JsonLd, productLd } from '@abeedoo/radish-components';
   import Demo from '$lib/components/Demo.svelte';
-  import { dataTableProps, modalProps, confirmDialogProps, emptyStateProps, iconProps, pageHeaderProps, tabsProps, autoFormProps, chatPanelProps } from '$lib/props';
+  import { dataGridProps, dataTableProps, modalProps, confirmDialogProps, emptyStateProps, iconProps, pageHeaderProps, tabsProps, autoFormProps, chatPanelProps } from '$lib/props';
 
   let modalOpen = $state(false);
   let confirmOpen = $state(false);
@@ -47,6 +47,56 @@
     </button>
   {/snippet}
 </PageHeader>`;
+
+  // DataGrid demo data
+  const gridColumns = [
+    { key: 'name', label: 'Name', sortable: true },
+    { key: 'email', label: 'Email', sortable: true },
+    { key: 'role', label: 'Role', editable: true, editType: 'select' as const, editOptions: [
+      { value: 'Admin', label: 'Admin' }, { value: 'Editor', label: 'Editor' }, { value: 'Viewer', label: 'Viewer' }
+    ]},
+    {
+      key: 'status', label: 'Status', sortable: true,
+      render: (value: string) => {
+        const colors: Record<string, string> = { active: 'badge-success', pending: 'badge-warning', inactive: 'badge-ghost' };
+        return `<span class="badge badge-sm ${colors[value] || ''}">${value}</span>`;
+      }
+    }
+  ];
+
+  const gridFilters = [
+    { key: 'role', label: 'Role', type: 'select' as const, options: [
+      { value: 'Admin', label: 'Admin' }, { value: 'Editor', label: 'Editor' }, { value: 'Viewer', label: 'Viewer' }
+    ]},
+    { key: 'status', label: 'Active', type: 'boolean' as const }
+  ];
+
+  const gridBulkActions = [
+    { label: 'Enable', icon: 'check', action: (ids: string[]) => toast.success(`Enabled ${ids.length} items`) },
+    { label: 'Delete', icon: 'trash', variant: 'danger' as const, confirm: 'Delete selected?', action: (ids: string[]) => toast.error(`Deleted ${ids.length} items`) }
+  ];
+
+  const dataGridCode = `import { DataGrid } from '@abeedoo/radish-components';
+
+<DataGrid
+  items={data}
+  columns={[
+    { key: 'name', label: 'Name', sortable: true },
+    { key: 'role', label: 'Role', editable: true, editType: 'select', editOptions: [...] },
+  ]}
+  filters={[
+    { key: 'role', label: 'Role', type: 'select', options: [...] },
+  ]}
+  bulkActions={[
+    { label: 'Delete', icon: 'trash', variant: 'danger', action: (ids) => delete(ids) },
+  ]}
+  entityName="products"
+  onSearch={(q) => search(q)}
+  onSort={(key, dir) => sort(key, dir)}
+  onPageChange={(p) => loadPage(p)}
+  onFilterChange={(f) => filter(f)}
+  onCellEdit={(id, key, val) => update(id, key, val)}
+/>`;
 
   const dataTableCode = `import { DataTable } from '@abeedoo/radish-components';
 
@@ -195,6 +245,22 @@ let messages = $state([
       </button>
     {/snippet}
   </PageHeader>
+</Demo>
+
+<Demo title="DataGrid" description="Feature-rich grid with filters, bulk actions, inline editing, saved views, and CSV export" code={dataGridCode} props={dataGridProps}>
+  <DataGrid
+    items={sampleData}
+    columns={gridColumns}
+    filters={gridFilters}
+    bulkActions={gridBulkActions}
+    pagination={{ page: 1, totalCount: sampleData.length, totalPages: 1 }}
+    entityName="users"
+    onSearch={(q) => toast.info(`Search: ${q}`)}
+    onSort={(key, dir) => toast.info(`Sort: ${key} ${dir}`)}
+    onFilterChange={(f) => toast.info(`Filter: ${JSON.stringify(f)}`)}
+    onCellEdit={(id, key, val) => toast.success(`Edit: ${key} = ${val}`)}
+    onRowClick={(item) => toast.info(`Clicked: ${item.name}`)}
+  />
 </Demo>
 
 <Demo title="DataTable" description="Sortable, searchable table with actions and pagination" code={dataTableCode} props={dataTableProps}>
