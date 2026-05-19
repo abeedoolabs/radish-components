@@ -336,6 +336,10 @@ export const dataGridProps: PropDef[] = [
   { name: 'expandable', type: 'boolean', default: 'false', description: 'Enable row expansion' },
   { name: 'expandContent', type: 'Snippet<[item]>', description: 'Expanded row content' },
   { name: 'idKey', type: 'string', default: 'id', description: 'Key for row identity' },
+  { name: 'title', type: 'string', description: 'Header title' },
+  { name: 'loading', type: 'boolean', default: 'false', description: 'Skeleton loading state' },
+  { name: 'emptyMessage', type: 'string', default: 'No items found.', description: 'Empty state message' },
+  { name: 'headerActions', type: 'Snippet', description: 'Buttons in header toolbar' },
   classProp
 ];
 

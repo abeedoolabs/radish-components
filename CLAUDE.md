@@ -101,7 +101,7 @@ import { Button, Card, Modal, DataTable, toast, Icon } from '@abeedoo/radish-com
 | Component | Key Props | Notes |
 |-----------|-----------|-------|
 | `ConfirmDialog` | `open`(bindable), `title`, `message`, `confirmLabel`, `confirmVariant`, `onConfirm`, `onCancel` | |
-| `DataGrid` | `items`, `columns[]`, `pagination`, `filters[]`, `bulkActions[]`, `onSearch`, `onSort`, `onPageChange`, `onFilterChange`, `onCellEdit`, `onSaveView`, `onDeleteView`, `onViewChange`, `savedViews[]`, `expandable`, `expandContent`(snippet), `exportable`, `entityName`, `searchQuery`, `sortBy`, `sortDir`, `idKey` | Feature-rich: inline editing, saved views, bulk ops, filters, column config, CSV export |
+| `DataGrid` | `items`, `columns[]`, `pagination`, `filters[]`, `bulkActions[]`, `onSearch`, `onSort`, `onPageChange`, `onFilterChange`, `onCellEdit`, `onSaveView`, `onDeleteView`, `onViewChange`, `savedViews[]`, `expandable`, `expandContent`(snippet), `exportable`, `entityName`, `searchQuery`, `sortBy`, `sortDir`, `idKey`, `title`, `loading`, `emptyMessage`, `headerActions`(snippet) | Feature-rich: inline editing, saved views, bulk ops, filters, column config, CSV export |
 | `DataTable` | `items`, `columns[]`, `actions[]`, `searchable`, `onSearch`, `selectable`, `selectedItems`(bindable), `onRowClick`, `onPageChange`, `page`, `totalPages`, `rowClass`, `headerActions`(snippet) | |
 | `EmptyState` | `icon`, `title`, `message`, `actions`(snippet) | |
 | `Icon` | `name`, `size` | 40+ feather icons |

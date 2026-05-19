@@ -4,6 +4,7 @@
  * bulk operations, filters, inline editing, expandable rows, and CSV export.
  * Framework-agnostic: no SvelteKit dependencies. Uses callbacks for all interactions.
  */
+import type { Snippet } from 'svelte';
 import Icon from './Icon.svelte';
 import { cn } from '../../utils.js';
 
@@ -72,6 +73,10 @@ let {
   onFilterChange,
   onViewChange,
   idKey = 'id',
+  title = '',
+  loading = false,
+  emptyMessage = 'No items found.',
+  headerActions,
   class: className = '',
   ...rest
 }: {
@@ -99,6 +104,10 @@ let {
   onFilterChange?: (filters: Record<string, string>) => void;
   onViewChange?: (view: SavedView | null) => void;
   idKey?: string;
+  title?: string;
+  loading?: boolean;
+  emptyMessage?: string;
+  headerActions?: Snippet;
   class?: string;
   [key: string]: any;
 } = $props();
@@ -341,116 +350,146 @@ function getFilterLabel(key: string, value: string): string {
 </script>
 
 <div class={cn('space-y-3', className)} {...rest}>
-  <!-- Top toolbar -->
-  <div class="flex flex-wrap items-center gap-2">
-    <!-- Search -->
-    {#if onSearch}
-      <div class="relative">
-        <input type="text" class="input input-bordered input-sm w-56 pl-8" placeholder={searchPlaceholder}
-          bind:value={searchInput} oninput={handleSearch} />
-        <Icon name="search" size={14} class="absolute left-2.5 top-1/2 -translate-y-1/2 text-base-content/30 pointer-events-none" />
-      </div>
-    {/if}
+  <!-- Header -->
+  <div class="flex items-center justify-between gap-4 flex-wrap">
+    <div class="flex items-baseline gap-3">
+      {#if title}
+        <h2 class="text-lg font-semibold">{title}</h2>
+      {/if}
+      {#if pagination.totalCount !== undefined}
+        <span class="text-sm text-base-content/50">{pagination.totalCount} {entityName}{pagination.totalCount !== 1 ? 's' : ''}</span>
+      {/if}
+      {#if selectedIds.size > 0}
+        <span class="text-sm text-primary font-medium">{selectedIds.size} selected</span>
+      {/if}
+    </div>
 
-    <!-- Filter toggle -->
-    {#if filters.length > 0}
-      <button class="btn btn-sm {showFilterPanel ? 'btn-primary' : 'btn-ghost'} gap-1" onclick={() => showFilterPanel = !showFilterPanel}>
-        <Icon name="filter" size={14} />
-        Filters
-        {#if activeFilterCount > 0}<span class="badge badge-xs badge-primary">{activeFilterCount}</span>{/if}
-      </button>
-    {/if}
+    <div class="flex items-center gap-2">
+      {#if onSearch}
+        <div class="relative">
+          <input
+            type="text"
+            placeholder={searchPlaceholder}
+            class="input input-bordered input-sm w-64 pl-9"
+            bind:value={searchInput}
+            oninput={handleSearch}
+          />
+          <span class="absolute left-3 top-1/2 -translate-y-1/2 opacity-50">
+            <Icon name="search" size={14} />
+          </span>
+          {#if searchInput}
+            <button
+              type="button"
+              class="absolute right-2 top-1/2 -translate-y-1/2 btn btn-ghost btn-xs btn-circle"
+              onclick={() => { searchInput = ''; onSearch?.(''); }}
+            >
+              <Icon name="x" size={12} />
+            </button>
+          {/if}
+        </div>
+      {/if}
 
-    <div class="flex-1"></div>
-
-    <!-- Selection count + bulk actions dropdown -->
-    {#if selectedIds.size > 0 && bulkActions.length > 0}
-      <span class="text-xs text-base-content/50">{selectedIds.size} selected</span>
-      <div class="dropdown dropdown-end">
-        <button class="btn btn-sm btn-outline gap-1">
-          Actions <Icon name="chevron-down" size={12} />
+      <!-- Filter toggle -->
+      {#if filters.length > 0}
+        <button class="btn btn-sm {showFilterPanel ? 'btn-primary' : 'btn-ghost'} gap-1" onclick={() => showFilterPanel = !showFilterPanel}>
+          <Icon name="filter" size={14} />
+          Filters
+          {#if activeFilterCount > 0}<span class="badge badge-xs badge-primary">{activeFilterCount}</span>{/if}
         </button>
-        <ul class="dropdown-content z-50 mt-1 w-48 rounded-lg border border-base-300 bg-base-100 p-1 shadow-xl">
-          {#each bulkActions as action}
-            <li>
-              <button
-                class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-base-200 {action.variant === 'danger' ? 'text-error' : ''}"
-                onclick={() => {
-                  if (action.confirm && !confirm(action.confirm)) return;
-                  action.action([...selectedIds]);
-                }}
-              >
-                {#if action.icon}<Icon name={action.icon} size={14} />{/if}
-                {action.label}
-              </button>
-            </li>
-          {/each}
-        </ul>
-      </div>
-    {/if}
+      {/if}
 
-    <!-- Saved views -->
-    {#if savedViews.length > 0 || onSaveView}
-      <div class="dropdown dropdown-end">
-        <button class="btn btn-ghost btn-sm gap-1">
-          <Icon name="eye" size={14} />
-          {activeViewName || 'Views'}
-        </button>
-        <div class="dropdown-content z-50 mt-1 w-64 rounded-lg border border-base-300 bg-base-100 p-2 shadow-xl">
-          <button class="flex w-full items-center gap-2 rounded px-3 py-1.5 text-left text-sm hover:bg-base-200 {!activeViewId ? 'bg-primary/10 text-primary font-medium' : ''}"
-            onclick={() => resetToDefault()}>
-            <Icon name="layout-dashboard" size={12} />
-            Default View
+      <!-- Bulk actions dropdown -->
+      {#if selectedIds.size > 0 && bulkActions.length > 0}
+        <div class="dropdown dropdown-end">
+          <button class="btn btn-sm btn-outline gap-1">
+            Actions <Icon name="chevron-down" size={12} />
           </button>
-
-          {#if savedViews.length > 0}
-            <div class="my-1 border-t border-base-200"></div>
-            {#each savedViews as view}
-              <div class="flex items-center gap-1 rounded hover:bg-base-200 {activeViewId === view.id ? 'bg-primary/10' : ''}">
-                <button class="flex flex-1 items-center gap-2 px-3 py-1.5 text-left text-sm {activeViewId === view.id ? 'text-primary font-medium' : ''}"
-                  onclick={() => applyView(view)}>
-                  <Icon name={view.isShared ? 'users' : 'eye'} size={12} />
-                  {view.name}
-                  {#if view.isDefault}<span class="badge badge-primary badge-xs ml-1">default</span>{/if}
+          <ul class="dropdown-content z-50 mt-1 w-48 rounded-lg border border-base-300 bg-base-100 p-1 shadow-xl">
+            {#each bulkActions as action}
+              <li>
+                <button
+                  class="flex w-full items-center gap-2 rounded-md px-3 py-2 text-left text-sm hover:bg-base-200 {action.variant === 'danger' ? 'text-error' : ''}"
+                  onclick={() => {
+                    if (action.confirm && !confirm(action.confirm)) return;
+                    action.action([...selectedIds]);
+                  }}
+                >
+                  {#if action.icon}<Icon name={action.icon} size={14} />{/if}
+                  {action.label}
                 </button>
-                {#if onDeleteView}
-                  <button class="btn btn-ghost btn-xs btn-square opacity-0 group-hover:opacity-100 hover:text-error" onclick={() => onDeleteView?.(view.id!)} aria-label="Delete">
-                    <Icon name="x" size={10} />
+              </li>
+            {/each}
+          </ul>
+        </div>
+      {/if}
+
+      <!-- Saved views -->
+      {#if savedViews.length > 0 || onSaveView}
+        <div class="dropdown dropdown-end">
+          <button class="btn btn-ghost btn-sm gap-1">
+            <Icon name="eye" size={14} />
+            {activeViewName || 'Views'}
+          </button>
+          <div class="dropdown-content z-50 mt-1 w-64 rounded-lg border border-base-300 bg-base-100 p-2 shadow-xl">
+            <button class="flex w-full items-center gap-2 rounded px-3 py-1.5 text-left text-sm hover:bg-base-200 {!activeViewId ? 'bg-primary/10 text-primary font-medium' : ''}"
+              onclick={() => resetToDefault()}>
+              <Icon name="layout-dashboard" size={12} />
+              Default View
+            </button>
+
+            {#if savedViews.length > 0}
+              <div class="my-1 border-t border-base-300"></div>
+              {#each savedViews as view}
+                <div class="flex items-center gap-1 rounded hover:bg-base-200 {activeViewId === view.id ? 'bg-primary/10' : ''}">
+                  <button class="flex flex-1 items-center gap-2 px-3 py-1.5 text-left text-sm {activeViewId === view.id ? 'text-primary font-medium' : ''}"
+                    onclick={() => applyView(view)}>
+                    <Icon name={view.isShared ? 'users' : 'eye'} size={12} />
+                    {view.name}
+                    {#if view.isDefault}<span class="badge badge-primary badge-xs ml-1">default</span>{/if}
+                  </button>
+                  {#if onDeleteView}
+                    <button class="btn btn-ghost btn-xs btn-square opacity-0 group-hover:opacity-100 hover:text-error" onclick={() => onDeleteView?.(view.id!)} aria-label="Delete">
+                      <Icon name="x" size={10} />
+                    </button>
+                  {/if}
+                </div>
+              {/each}
+            {/if}
+
+            {#if onSaveView}
+              <div class="mt-2 border-t border-base-300 pt-2">
+                {#if showViewSave}
+                  <div class="space-y-1">
+                    <input class="input input-bordered input-xs w-full" bind:value={viewName} placeholder="View name" />
+                    <label class="flex cursor-pointer items-center gap-1.5">
+                      <input type="checkbox" class="checkbox checkbox-xs" bind:checked={viewShared} />
+                      <span class="text-[10px]">Share with team</span>
+                    </label>
+                    <div class="flex gap-1">
+                      <button class="btn btn-primary btn-xs flex-1" onclick={saveView}>Save View</button>
+                      <button class="btn btn-ghost btn-xs" onclick={() => showViewSave = false}>Cancel</button>
+                    </div>
+                  </div>
+                {:else}
+                  <button class="btn btn-ghost btn-xs w-full gap-1" onclick={() => showViewSave = true}>
+                    <Icon name="plus" size={10} /> Save Current View
                   </button>
                 {/if}
               </div>
-            {/each}
-          {/if}
-
-          {#if onSaveView}
-            <div class="mt-2 border-t border-base-200 pt-2">
-              {#if showViewSave}
-                <div class="space-y-1">
-                  <input class="input input-bordered input-xs w-full" bind:value={viewName} placeholder="View name" />
-                  <label class="flex cursor-pointer items-center gap-1.5">
-                    <input type="checkbox" class="checkbox checkbox-xs" bind:checked={viewShared} />
-                    <span class="text-[10px]">Share with team</span>
-                  </label>
-                  <div class="flex gap-1">
-                    <button class="btn btn-primary btn-xs flex-1" onclick={saveView}>Save View</button>
-                    <button class="btn btn-ghost btn-xs" onclick={() => showViewSave = false}>Cancel</button>
-                  </div>
-                </div>
-              {:else}
-                <button class="btn btn-ghost btn-xs w-full gap-1" onclick={() => showViewSave = true}>
-                  <Icon name="plus" size={10} /> Save Current View
-                </button>
-              {/if}
-            </div>
-          {/if}
+            {/if}
+          </div>
         </div>
-      </div>
-    {/if}
+      {/if}
 
-    <!-- Export -->
-    {#if exportable}
-      <button class="btn btn-ghost btn-sm btn-square" onclick={exportCSV} aria-label="Export CSV"><Icon name="download" size={14} /></button>
-    {/if}
+      <!-- Export -->
+      {#if exportable}
+        <button class="btn btn-ghost btn-sm btn-square" onclick={exportCSV} aria-label="Export CSV"><Icon name="download" size={14} /></button>
+      {/if}
+
+      {#if headerActions}
+        {@render headerActions()}
+      {/if}
+    </div>
   </div>
 
   <!-- Active filter chips -->
@@ -471,161 +510,200 @@ function getFilterLabel(key: string, value: string): string {
 
   <!-- Expandable filter & column panel -->
   {#if showFilterPanel}
-    <div class="card border border-base-200 bg-base-100 shadow-sm">
-      <div class="card-body py-3 space-y-4">
-        <!-- Filters section with search -->
-        {#if filters.length > 0}
-          <div>
-            <div class="flex items-center justify-between mb-2">
-              <p class="text-xs font-semibold text-base-content/50">Filters ({filters.length})</p>
-              <input type="text" class="input input-bordered input-xs w-40" placeholder="Search filters..."
-                bind:value={filterSearch} />
-            </div>
-            <div class="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-5 max-h-48 overflow-y-auto">
-              {#each filteredFilters as filter}
-                {#if filter.type === 'select' && filter.options}
-                  <label class="form-control w-full">
-                    <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
-                    <select class="select select-bordered select-xs w-full" value={filter.value || ''}
-                      onchange={(e) => applyFilter(filter.key, (e.target as HTMLSelectElement).value)}>
-                      <option value="">All</option>
-                      {#each filter.options as opt}<option value={opt.value}>{opt.label}</option>{/each}
-                    </select>
-                  </label>
-                {:else if filter.type === 'text'}
-                  <label class="form-control w-full">
-                    <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
-                    <input type="text" class="input input-bordered input-xs w-full" value={filter.value || ''}
-                      onchange={(e) => applyFilter(filter.key, (e.target as HTMLInputElement).value)} />
-                  </label>
-                {:else if filter.type === 'boolean'}
-                  <label class="form-control w-full">
-                    <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
-                    <select class="select select-bordered select-xs w-full" value={filter.value || ''}
-                      onchange={(e) => applyFilter(filter.key, (e.target as HTMLSelectElement).value)}>
-                      <option value="">Any</option>
-                      <option value="true">Yes</option>
-                      <option value="false">No</option>
-                    </select>
-                  </label>
-                {/if}
-              {/each}
-            </div>
-            {#if filterSearch && filteredFilters.length === 0}
-              <p class="text-xs text-base-content/30 mt-1">No filters matching "{filterSearch}"</p>
-            {/if}
-          </div>
-        {/if}
-
-        <!-- Column configuration with search -->
+    <div class="rounded-lg border border-base-300 bg-base-100 p-3 space-y-4">
+      <!-- Filters section with search -->
+      {#if filters.length > 0}
         <div>
           <div class="flex items-center justify-between mb-2">
-            <p class="text-xs font-semibold text-base-content/50">Columns ({allColumns.length})</p>
-            <input type="text" class="input input-bordered input-xs w-40" placeholder="Search columns..."
-              bind:value={columnSearch} />
+            <p class="text-xs font-semibold text-base-content/50">Filters ({filters.length})</p>
+            <input type="text" class="input input-bordered input-xs w-40" placeholder="Search filters..."
+              bind:value={filterSearch} />
           </div>
-          <div class="grid grid-cols-2 gap-1 md:grid-cols-4 lg:grid-cols-6 max-h-48 overflow-y-auto">
-            {#each filteredColumns as col (col.key)}
-              <div class="flex items-center gap-1 rounded border border-base-200 px-1.5 py-1 text-[11px] {visibleColumnKeys.includes(col.key) ? 'bg-base-100' : 'bg-base-200/50 opacity-50'}">
-                <button class="text-base-content/15 hover:text-base-content/50" onclick={() => moveColumnUp(col.key)} aria-label="Left">
-                  <Icon name="chevron-left" size={9} />
-                </button>
-                <input type="checkbox" class="checkbox checkbox-xs" checked={visibleColumnKeys.includes(col.key)}
-                  onchange={() => toggleColumn(col.key)} />
-                <span class="flex-1 truncate">{col.label || col.key}</span>
-                {#if col.editable}
-                  <button
-                    class="rounded px-0.5 text-[8px] leading-none {editableColumnKeys.has(col.key) ? 'bg-primary/20 text-primary font-bold' : 'text-base-content/25'}"
-                    onclick={() => toggleEditable(col.key)}
-                  >
-                    {editableColumnKeys.has(col.key) ? 'E' : 'V'}
-                  </button>
-                {/if}
-                <button class="text-base-content/15 hover:text-base-content/50" onclick={() => moveColumnDown(col.key)} aria-label="Right">
-                  <Icon name="chevron-right" size={9} />
-                </button>
-              </div>
+          <div class="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-5 max-h-48 overflow-y-auto">
+            {#each filteredFilters as filter}
+              {#if filter.type === 'select' && filter.options}
+                <label class="form-control w-full">
+                  <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
+                  <select class="select select-bordered select-xs w-full" value={filter.value || ''}
+                    onchange={(e) => applyFilter(filter.key, (e.target as HTMLSelectElement).value)}>
+                    <option value="">All</option>
+                    {#each filter.options as opt}<option value={opt.value}>{opt.label}</option>{/each}
+                  </select>
+                </label>
+              {:else if filter.type === 'text'}
+                <label class="form-control w-full">
+                  <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
+                  <input type="text" class="input input-bordered input-xs w-full" value={filter.value || ''}
+                    onchange={(e) => applyFilter(filter.key, (e.target as HTMLInputElement).value)} />
+                </label>
+              {:else if filter.type === 'boolean'}
+                <label class="form-control w-full">
+                  <span class="label-text text-[10px] text-base-content/50">{filter.label}</span>
+                  <select class="select select-bordered select-xs w-full" value={filter.value || ''}
+                    onchange={(e) => applyFilter(filter.key, (e.target as HTMLSelectElement).value)}>
+                    <option value="">Any</option>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </label>
+              {/if}
             {/each}
           </div>
-          {#if columnSearch && filteredColumns.length === 0}
-            <p class="text-xs text-base-content/30 mt-1">No columns matching "{columnSearch}"</p>
+          {#if filterSearch && filteredFilters.length === 0}
+            <p class="text-xs text-base-content/30 mt-1">No filters matching "{filterSearch}"</p>
           {/if}
         </div>
+      {/if}
+
+      <!-- Column configuration with search -->
+      <div>
+        <div class="flex items-center justify-between mb-2">
+          <p class="text-xs font-semibold text-base-content/50">Columns ({allColumns.length})</p>
+          <input type="text" class="input input-bordered input-xs w-40" placeholder="Search columns..."
+            bind:value={columnSearch} />
+        </div>
+        <div class="grid grid-cols-2 gap-1 md:grid-cols-4 lg:grid-cols-6 max-h-48 overflow-y-auto">
+          {#each filteredColumns as col (col.key)}
+            <div class="flex items-center gap-1 rounded border border-base-300 px-1.5 py-1 text-[11px] {visibleColumnKeys.includes(col.key) ? 'bg-base-100' : 'bg-base-200/50 opacity-50'}">
+              <button class="text-base-content/15 hover:text-base-content/50" onclick={() => moveColumnUp(col.key)} aria-label="Left">
+                <Icon name="chevron-left" size={9} />
+              </button>
+              <input type="checkbox" class="checkbox checkbox-xs" checked={visibleColumnKeys.includes(col.key)}
+                onchange={() => toggleColumn(col.key)} />
+              <span class="flex-1 truncate">{col.label || col.key}</span>
+              {#if col.editable}
+                <button
+                  class="rounded px-0.5 text-[8px] leading-none {editableColumnKeys.has(col.key) ? 'bg-primary/20 text-primary font-bold' : 'text-base-content/25'}"
+                  onclick={() => toggleEditable(col.key)}
+                >
+                  {editableColumnKeys.has(col.key) ? 'E' : 'V'}
+                </button>
+              {/if}
+              <button class="text-base-content/15 hover:text-base-content/50" onclick={() => moveColumnDown(col.key)} aria-label="Right">
+                <Icon name="chevron-right" size={9} />
+              </button>
+            </div>
+          {/each}
+        </div>
+        {#if columnSearch && filteredColumns.length === 0}
+          <p class="text-xs text-base-content/30 mt-1">No columns matching "{columnSearch}"</p>
+        {/if}
       </div>
     </div>
   {/if}
 
-  <!-- Count -->
-  <p class="text-xs text-base-content/40">{pagination.totalCount} {entityName}</p>
+  <!-- Loading -->
+  {#if loading}
+    <div class="overflow-x-auto rounded-lg border border-base-300">
+      <table class="table table-zebra">
+        <thead>
+          <tr>
+            {#if bulkActions.length > 0}<th class="w-10"></th>{/if}
+            {#if expandable}<th class="w-10"></th>{/if}
+            {#each visibleColumns as col}
+              <th>{col.label}</th>
+            {/each}
+          </tr>
+        </thead>
+        <tbody>
+          {#each Array(5) as _}
+            <tr>
+              {#if bulkActions.length > 0}<td><div class="skeleton h-4 w-4"></div></td>{/if}
+              {#if expandable}<td><div class="skeleton h-4 w-4"></div></td>{/if}
+              {#each visibleColumns as _col}
+                <td><div class="skeleton h-4 w-24"></div></td>
+              {/each}
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
+
+  <!-- Empty -->
+  {:else if items.length === 0}
+    <div class="text-center py-12 text-base-content/50 border border-base-300 rounded-lg bg-base-100">
+      <Icon name="database" size={32} class="mx-auto mb-2 opacity-30" />
+      <p>{emptyMessage}</p>
+    </div>
 
   <!-- Table -->
-  <div class="card border border-base-200 bg-base-100 shadow-sm">
-    <div class="overflow-x-auto">
-      <table class="table table-sm">
+  {:else}
+    <div class="overflow-x-auto rounded-lg border border-base-300 bg-base-100">
+      <table class="table table-zebra">
         <thead>
           <tr>
             {#if bulkActions.length > 0}
-              <th class="w-8"><input type="checkbox" class="checkbox checkbox-xs" checked={selectAll} onchange={toggleSelectAll} /></th>
+              <th class="w-10">
+                <input type="checkbox" class="checkbox checkbox-sm" checked={selectAll} onchange={toggleSelectAll} />
+              </th>
             {/if}
-            {#if expandable}<th class="w-8"></th>{/if}
+            {#if expandable}<th class="w-10"></th>{/if}
             {#each visibleColumns as col (col.key)}
               <th
-                class="{col.align === 'right' ? 'text-right' : ''} {dragCol === col.key ? 'opacity-40' : ''} select-none"
+                class={cn(
+                  col.align === 'right' && 'text-right',
+                  dragCol === col.key && 'opacity-40',
+                  col.sortable && 'cursor-pointer select-none hover:bg-base-200 transition-colors',
+                  !col.sortable && 'select-none'
+                )}
                 style={col.width ? `width:${col.width}` : ''}
                 draggable="true"
                 ondragstart={() => onColDragStart(col.key)}
                 ondragover={(e) => onColDragOver(e, col.key)}
                 ondragend={onColDragEnd}
+                onclick={() => col.sortable && handleSort(col.key)}
               >
-                {#if col.sortable}
-                  <button class="flex items-center gap-1 hover:text-primary transition-colors" onclick={() => handleSort(col.key)}>
-                    {col.label}
+                <span class="inline-flex items-center gap-1">
+                  {col.label}
+                  {#if col.sortable}
                     {#if currentSort === col.key}
-                      <Icon name={currentDir === 'asc' ? 'chevron-up' : 'chevron-down'} size={12} class="text-primary" />
+                      <Icon name={currentDir === 'asc' ? 'chevron-up' : 'chevron-down'} size={14} />
+                    {:else}
+                      <span class="opacity-20"><Icon name="chevron-up" size={14} /></span>
                     {/if}
-                  </button>
-                {:else if col.label}
-                  <span class="cursor-grab">{col.label}</span>
-                {/if}
+                  {/if}
+                </span>
               </th>
             {/each}
           </tr>
         </thead>
         <tbody>
           {#each items as item (item[idKey])}
-            <tr class="{onRowClick ? 'cursor-pointer' : ''} hover:bg-base-200/50"
-              onclick={() => { if (onRowClick && !selectedIds.size && !editingCell) onRowClick(item); }}>
+            <tr
+              class={cn('hover', onRowClick && 'cursor-pointer')}
+              onclick={() => { if (onRowClick && !selectedIds.size && !editingCell) onRowClick(item); }}
+            >
               {#if bulkActions.length > 0}
                 <td onclick={(e) => e.stopPropagation()}>
-                  <input type="checkbox" class="checkbox checkbox-xs" checked={selectedIds.has(item[idKey])}
+                  <input type="checkbox" class="checkbox checkbox-sm" checked={selectedIds.has(item[idKey])}
                     onchange={() => toggleSelect(item[idKey])} />
                 </td>
               {/if}
               {#if expandable}
                 <td>
                   <button class="btn btn-ghost btn-xs btn-square" onclick={(e) => { e.stopPropagation(); toggleExpand(item[idKey]); }}>
-                    <Icon name={expandedIds.has(item[idKey]) ? 'chevron-down' : 'chevron-right'} size={12} />
+                    <Icon name={expandedIds.has(item[idKey]) ? 'chevron-down' : 'chevron-right'} size={14} />
                   </button>
                 </td>
               {/if}
               {#each visibleColumns as col}
                 {@const isEditing = editingCell?.id === item[idKey] && editingCell?.key === col.key}
                 {@const canEdit = col.editable && editableColumnKeys.has(col.key)}
-                <td class="{col.align === 'right' ? 'text-right' : ''}" onclick={(e) => { if (canEdit) { e.stopPropagation(); startEdit(item[idKey], col.key, item[col.key]); } }}>
+                <td class={col.align === 'right' ? 'text-right' : ''} onclick={(e) => { if (canEdit) { e.stopPropagation(); startEdit(item[idKey], col.key, item[col.key]); } }}>
                   {#if isEditing}
                     {#if col.editType === 'select' && col.editOptions}
-                      <select class="select select-bordered select-xs w-full" bind:value={editingValue}
+                      <select class="select select-bordered select-sm w-full" bind:value={editingValue}
                         onchange={commitEdit} onblur={commitEdit}>
                         {#each col.editOptions as opt}<option value={opt.value}>{opt.label}</option>{/each}
                       </select>
                     {:else if col.editType === 'boolean'}
-                      <input type="checkbox" class="toggle toggle-primary toggle-xs" checked={editingValue}
+                      <input type="checkbox" class="toggle toggle-primary toggle-sm" checked={editingValue}
                         onchange={(e) => { editingValue = (e.target as HTMLInputElement).checked; commitEdit(); }} />
                     {:else if col.editType === 'number'}
-                      <input type="number" class="input input-bordered input-xs w-20" bind:value={editingValue}
+                      <input type="number" class="input input-bordered input-sm w-20" bind:value={editingValue}
                         onblur={commitEdit} onkeydown={(e) => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') cancelEdit(); }} autofocus />
                     {:else}
-                      <input type="text" class="input input-bordered input-xs w-full" bind:value={editingValue}
+                      <input type="text" class="input input-bordered input-sm w-full" bind:value={editingValue}
                         onblur={commitEdit} onkeydown={(e) => { if (e.key === 'Enter') commitEdit(); if (e.key === 'Escape') cancelEdit(); }} autofocus />
                     {/if}
                   {:else if col.render}
@@ -641,15 +719,14 @@ function getFilterLabel(key: string, value: string): string {
                 {@render expandContent(item)}
               </td></tr>
             {/if}
-          {:else}
-            <tr><td colspan={visibleColumns.length + (bulkActions.length > 0 ? 1 : 0) + (expandable ? 1 : 0)} class="py-12 text-center text-base-content/40">No {entityName} found</td></tr>
           {/each}
         </tbody>
       </table>
     </div>
 
+    <!-- Pagination -->
     {#if pageNumbers.length > 0 && onPageChange}
-      <div class="flex items-center justify-between border-t border-base-200 p-3">
+      <div class="flex items-center justify-between">
         <span class="text-sm text-base-content/50">
           Page {pagination.page} of {pagination.totalPages}
         </span>
@@ -666,7 +743,7 @@ function getFilterLabel(key: string, value: string): string {
               <button class="join-item btn btn-sm btn-disabled">...</button>
             {:else}
               <button
-                class={cn('join-item btn btn-sm', pagination.page === p && 'btn-primary')}
+                class={cn('join-item btn btn-sm', pagination.page === p && 'btn-active')}
                 onclick={() => onPageChange?.(p)}
               >
                 {p}
@@ -683,5 +760,5 @@ function getFilterLabel(key: string, value: string): string {
         </div>
       </div>
     {/if}
-  </div>
+  {/if}
 </div>

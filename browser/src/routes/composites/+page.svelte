@@ -254,13 +254,20 @@ let messages = $state([
     filters={gridFilters}
     bulkActions={gridBulkActions}
     pagination={{ page: 1, totalCount: sampleData.length, totalPages: 1 }}
-    entityName="users"
+    title="Users"
+    entityName="user"
     onSearch={(q) => toast.info(`Search: ${q}`)}
     onSort={(key, dir) => toast.info(`Sort: ${key} ${dir}`)}
     onFilterChange={(f) => toast.info(`Filter: ${JSON.stringify(f)}`)}
     onCellEdit={(id, key, val) => toast.success(`Edit: ${key} = ${val}`)}
     onRowClick={(item) => toast.info(`Clicked: ${item.name}`)}
-  />
+  >
+    {#snippet headerActions()}
+      <button class="btn btn-primary btn-sm">
+        <Icon name="plus" size={14} /> Add
+      </button>
+    {/snippet}
+  </DataGrid>
 </Demo>
 
 <Demo title="DataTable" description="Sortable, searchable table with actions and pagination" code={dataTableCode} props={dataTableProps}>
