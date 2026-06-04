@@ -1,6 +1,6 @@
 {
   "name": "@abeedoo/radish-components",
-  "version": "0.4.2",
+  "version": "0.5.0",
   "description": "Svelte 5 + DaisyUI v5 component library — 70+ components with TypeScript, runes, and snippets",
   "type": "module",
   "svelte": "./dist/index.js",
